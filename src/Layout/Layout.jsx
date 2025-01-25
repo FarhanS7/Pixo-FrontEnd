@@ -6,9 +6,13 @@ import Navbar from "../components/Shared/Navbar/Navbar";
 const Layout = () => {
   return (
     <div>
-      <Navbar />
+      <div className="mt-26">
+        <Navbar />
+      </div>
       <Outlet />
-      <Footer />
+      <div className="mt-25">
+        <Footer />
+      </div>
     </div>
   );
 };
