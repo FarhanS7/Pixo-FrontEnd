@@ -1,6 +1,6 @@
 import { Heart, Home, MessageCircle, PlusSquare, Search } from "lucide-react";
 import { default as React, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -26,12 +26,16 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-600 shadow-2xl">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-indigo-700 via-purple-700 to-indigo-600 shadow-2xl items-center">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex justify-between items-center py-4">
           {/* Pixo Logo aligned to the left */}
-          <div className="text-3xl font-bold text-white tracking-wider">
-            Pixo
+          <div className="flex items-center h-10">
+            <img
+              className="h-60 w-auto object-contain" /* Ensuring logo height 40 without affecting navbar height */
+              src="https://i.imghippo.com/files/Frl3187vLY.png"
+              alt="logo"
+            />
           </div>
 
           {/* NavItems centered in the middle */}
@@ -83,12 +87,16 @@ const Navbar = () => {
 
           {/* Login/Sign Up buttons aligned to the right */}
           <div className="flex items-center space-x-4">
-            <button className="px-4 py-2 text-white bg-white/20 hover:bg-white/30 rounded-full transition-all">
-              Login
-            </button>
-            <button className="px-4 py-2 bg-white text-purple-700 rounded-full hover:scale-105 transition-all text-nowrap">
-              Sign Up
-            </button>
+            <Link to="/login">
+              <button className="px-4 py-2 text-white bg-white/20 hover:bg-white/30 rounded-full transition-all">
+                Login
+              </button>
+            </Link>
+            <Link to="/register">
+              <button className="px-4 py-2 bg-white text-purple-700 rounded-full hover:scale-105 transition-all text-nowrap">
+                Sign Up
+              </button>
+            </Link>
           </div>
         </div>
       </div>

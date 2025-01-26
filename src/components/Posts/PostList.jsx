@@ -29,7 +29,7 @@ const PostsList = () => {
     <section className="overflow-hidden">
       <div className="container px-4 mx-auto">
         <h1 className="text-4xl lg:text-6xl font-bold font-heading mb-6 mt-16">
-          Blog
+          Feed
         </h1>
 
         {/* featured post */}
