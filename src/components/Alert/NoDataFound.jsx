@@ -1,18 +1,15 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { deletePostAPI, fetchAllPosts } from "../../APIServices/posts/postsAPI";
 import AlertMessage from "../Alert/AlertMessage";
 import NoDataFound from "../Alert/NoDataFound";
-import "./postCss.css";
 
 const PostsList = () => {
-  const [page, setPage] = useState(1); // Track current page
-
   // use query
   const { isError, isLoading, data, error, isSuccess, refetch } = useQuery({
-    queryKey: ["lists-posts", page], // Refetch query when page changes
-    queryFn: () => fetchAllPosts(page),
+    queryKey: ["lists-posts"],
+    queryFn: fetchAllPosts,
   });
 
   // post mutation
@@ -41,16 +38,6 @@ const PostsList = () => {
 
   // No posts found
   if (data?.posts?.length <= 0) return <NoDataFound text="No Post Found" />;
-
-  // Calculate visibility of Previous and Next buttons
-  const isPreviousButtonVisible = page > 1;
-  const isNextButtonVisible = page < data?.totalPages;
-
-  const handlePageChange = (newPage) => {
-    if (newPage > 0 && newPage <= data?.totalPages) {
-      setPage(newPage);
-    }
-  };
 
   return (
     <section className="overflow-hidden bg-gradient-to-br from-purple-500 via-indigo-600 to-pink-600 py-8">
@@ -111,7 +98,7 @@ const PostsList = () => {
           )}
 
           <span className="text-sm font-semibold text-white">
-            Page {page} of {data?.totalPages}
+            Page {page} of {postsData?.totalPages}
           </span>
 
           {/* Next Button */}

@@ -124,7 +124,7 @@ const Signup = () => {
           {/* Google Sign In */}
           <div>
             <a
-              href="http://localhost:9000/api/v1/users/auth/google" // Make sure to replace this URL
+              href="http://localhost:5000/api/v1/users/auth/google" // Make sure to replace this URL
               className="h-14 inline-flex items-center justify-center gap-3 py-4 px-6 rounded-full bg-white w-full text-center border border-gray-100 shadow hover:bg-gray-50 focus:ring focus:ring-orange-200 transition duration-200 mt-4"
             >
               <svg

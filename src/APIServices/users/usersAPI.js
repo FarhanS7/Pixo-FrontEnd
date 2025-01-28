@@ -30,3 +30,24 @@ export const loginAPI = async (userData) => {
   );
   return response.data;
 };
+
+//! Check AuthStatus User
+export const checkAuthStatusAPI = async () => {
+  const response = await axios.get(`${BASE_URL}/users/checkAuthenticated`, {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+// ! logout user
+export const logoutAPI = async (userData) => {
+  const response = await axios.post(
+    `${BASE_URL}/users/logout`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};

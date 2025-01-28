@@ -7,9 +7,12 @@ const Layout = () => {
   return (
     <div>
       <div className="mt-26">
-        <Navbar />
+        {" "}
+        <Navbar />{" "}
       </div>
+      <div className="mt-50">{/* <PrivateNavbar /> */}</div>
       <Outlet />
+
       <div className="mt-25">
         <Footer />
       </div>

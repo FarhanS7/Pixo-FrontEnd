@@ -13,122 +13,77 @@ import { fetchPost } from "../../APIServices/posts/postsAPI";
 
 const PostDetails = () => {
   const [comment, setComment] = useState("");
-  // !Get the post id
   const { postId } = useParams();
-  // ! use query
   const { isError, isLoading, data, error, isSuccess } = useQuery({
     queryKey: ["post-details"],
     queryFn: () => fetchPost(postId),
   });
-  console.log(data);
+
   return (
-    <div className="container mx-auto p-4">
-      <div className="bg-white rounded-lg shadow-lg p-5">
+    <div className="container mx-auto p-6 bg-gradient-to-br from-purple-500 via-indigo-600 to-pink-600 min-h-screen">
+      <div className="bg-white rounded-lg shadow-lg p-5 transition-all transform hover:scale-105 hover:shadow-xl">
         <img
-          src={data.postFound?.image?.path}
-          alt={data.postFound?.description}
-          className="w-full h-full object-cover rounded-lg mb-4"
+          src={data?.postFound?.image?.path}
+          alt={data?.postFound?.description}
+          className="w-full h-72 object-cover rounded-lg mb-4 transition-all transform hover:scale-105"
         />
-        {/* Show messages */}
-
         <div className="flex gap-4 items-center mb-4">
-          {/* like icon */}
-          <span
-            className="flex items-center gap-1 cursor-pointer"
-            // onClick={handleLike}
-          >
+          <span className="flex items-center gap-1 cursor-pointer transition-all hover:text-blue-500">
             <FaThumbsUp />
-            {/* {postData?.likes?.length || 0} */}
           </span>
-
-          {/* Dislike icon */}
-          <span
-            className="flex items-center gap-1 cursor-pointer"
-            // onClick={handleDislike}
-          >
+          <span className="flex items-center gap-1 cursor-pointer transition-all hover:text-red-500">
             <FaThumbsDown />
-
-            {/* {postData?.dislikes?.length || 0} */}
           </span>
-          {/* views icon */}
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1 cursor-pointer text-gray-600 hover:text-purple-400">
             <FaEye />
-            {/* {postData?.viewsCount || 0} */}
           </span>
         </div>
-        {/* follow icon */}
-        {isFollowing ? (
-          <button
-            onClick={handleFollow}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-          >
-            <RiUserUnfollowFill className="mr-2" />
-            Unfollow
-          </button>
-        ) : (
-          <button
-            onClick={handleFollow}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-          >
-            Follow
-            <RiUserFollowLine className="ml-2" />
-          </button>
-        )}
 
-        {/* author */}
-        <span className="ml-2">{/* {postData?.author?.username} */}</span>
+        {/* Post author info */}
+        <span className="text-sm text-gray-700">
+          {/* {postData?.author?.username} */}
+        </span>
 
-        {/* post details */}
+        {/* Post description */}
         <div className="flex justify-between items-center mb-3">
           <div
-            className="rendered-html-content mb-2"
+            className="rendered-html-content mb-2 text-lg text-gray-800"
             dangerouslySetInnerHTML={{ __html: data?.postFound?.description }}
           />
-
-          {/* Edit delete icon */}
           <div className="flex gap-2">
-            <FaEdit className="text-blue-500 cursor-pointer" />
-            <FaTrashAlt className="text-red-500 cursor-pointer" />
+            <FaEdit className="text-blue-500 cursor-pointer transition-all transform hover:scale-110 hover:text-blue-700" />
+            <FaTrashAlt className="text-red-500 cursor-pointer transition-all transform hover:scale-110 hover:text-red-700" />
           </div>
         </div>
 
         {/* Comment Form */}
-        <form>
+        <form className="mb-4">
           <textarea
-            className="w-full border border-gray-300 p-2 rounded-lg mb-2"
+            className="w-full border border-gray-300 p-3 rounded-lg mb-2 transition-all focus:outline-none focus:ring-2 focus:ring-purple-400"
             rows="3"
             placeholder="Add a comment..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            {...formik.getFieldProps("content")}
           ></textarea>
-          {/* comment error */}
-          {formik.touched.content && formik.errors.content && (
-            <div className="text-red-500 mb-4 mt-1">
-              {formik.errors.content}
-            </div>
-          )}
           <button
             type="submit"
-            className="bg-blue-500 text-white rounded-lg px-4 py-2"
+            className="bg-blue-500 text-white rounded-lg px-6 py-2 transition-all hover:bg-blue-600"
           >
-            <FaComment className="inline mr-1" /> Comment
+            <FaComment className="inline mr-2" /> Comment
           </button>
         </form>
-        {/* Comments List */}
+
+        {/* Comments Section */}
         <div>
-          <h2 className="text-xl font-bold mb-2">Comments:</h2>
-          {postData?.comments?.map((comment, index) => (
-            <div key={index} className="border-b border-gray-300 mb-2 pb-2">
+          <h2 className="text-xl font-bold mb-2 text-gray-800">Comments:</h2>
+          {/* Here we would map over the comments, e.g. */}
+          {/* {postData?.comments?.map((comment, index) => (
+            <div key={index} className="border-b border-gray-300 mb-2 pb-2 hover:bg-gray-100 transition-all">
               <p className="text-gray-800">{comment.content}</p>
-              <span className="text-gray-600 text-sm">
-                - {comment.author?.username}
-              </span>
-              <small className="text-gray-600 text-sm ml-2">
-                {new Date(comment.createdAt).toLocaleDateString()}
-              </small>
+              <span className="text-gray-600 text-sm">- {comment.author?.username}</span>
+              <small className="text-gray-600 text-sm ml-2">{new Date(comment.createdAt).toLocaleDateString()}</small>
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>
