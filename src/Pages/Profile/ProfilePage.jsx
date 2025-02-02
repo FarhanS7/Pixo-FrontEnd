@@ -16,7 +16,12 @@ const Profile = () => {
   useEffect(() => {
     dispatch(isAuthenticated(data));
   }, [data]);
-  return <div>Profile</div>;
+  return (
+    <div>
+      Profile
+      <h1>Welcome to profile page</h1>
+    </div>
+  );
 };
 
 export default Profile;
