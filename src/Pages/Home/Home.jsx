@@ -6,9 +6,11 @@ import Hero from "../../components/Home/Hero/Hero";
 const Home = () => {
   return (
     <>
-      <Hero />
-      <About />
-      <Banner />
+      <div className="mt-30">
+        <Hero />
+        <About />
+        <Banner />
+      </div>
     </>
   );
 };

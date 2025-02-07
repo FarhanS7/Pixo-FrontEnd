@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { checkAuthStatusAPI } from "../../APIServices/users/usersAPI";
+import UserDashboard from "../../components/Dashboard/UserDashboard";
 import { isAuthenticated } from "../../redux/slices/authSlices";
 
 const Profile = () => {
@@ -18,8 +19,7 @@ const Profile = () => {
   }, [data]);
   return (
     <div>
-      Profile
-      <h1>Welcome to profile page</h1>
+      <UserDashboard />
     </div>
   );
 };

@@ -1,89 +1,251 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useFormik } from "formik";
 import React, { useState } from "react";
-import {
-  FaComment,
-  FaEdit,
-  FaEye,
-  FaThumbsDown,
-  FaThumbsUp,
-  FaTrashAlt,
-} from "react-icons/fa";
+import { FaComment, FaEye, FaThumbsDown, FaThumbsUp } from "react-icons/fa";
+import { RiUserFollowLine, RiUserUnfollowFill } from "react-icons/ri";
 import { useParams } from "react-router-dom";
-import { fetchPost } from "../../APIServices/posts/postsAPI";
-
+import * as Yup from "yup";
+import { createCommentAPI } from "../../APIServices/comments/commentsAPI";
+import {
+  dislikePostAPI,
+  fetchPost,
+  likePostAPI,
+} from "../../APIServices/posts/postsAPI";
+import {
+  followUserAPI,
+  unfollowUserAPI,
+  userProfileAPI,
+} from "../../APIServices/users/usersAPI";
 const PostDetails = () => {
   const [comment, setComment] = useState("");
+  // !Get the post id
   const { postId } = useParams();
-  const { isError, isLoading, data, error, isSuccess } = useQuery({
+  // ! use query
+  const {
+    isError,
+    isLoading,
+    data,
+    error,
+    refetch: refetchPost,
+  } = useQuery({
     queryKey: ["post-details"],
     queryFn: () => fetchPost(postId),
   });
+  //! Profile useQuery
+  const { data: profileData, refetch: refetchProfile } = useQuery({
+    queryKey: ["profile"],
+    queryFn: () => userProfileAPI(),
+  });
 
+  //----Follow logic----
+  //Get the author id
+  const targetId = data?.postFound?.author;
+  //get the login user id
+  const userId = profileData?.user?._id;
+  //Get if the user/login is following the user
+  const isFollowing = profileData?.user?.following?.find(
+    (user) => user?._id?.toString() === targetId?.toString()
+  );
+
+  //---Follow & unfollow mutation
+  const followUserMutation = useMutation({
+    mutationKey: ["follow"],
+    mutationFn: followUserAPI,
+  });
+  const unfollowUserMutation = useMutation({
+    mutationKey: ["unfollow"],
+    mutationFn: unfollowUserAPI,
+  });
+
+  //---lies & dislikes mutation
+  const likePostMutation = useMutation({
+    mutationKey: ["likes"],
+    mutationFn: likePostAPI,
+  });
+  const dislikePostMutation = useMutation({
+    mutationKey: ["dislikes"],
+    mutationFn: dislikePostAPI,
+  });
+
+  //----handler for follow mutation
+  const followUserHandler = async () => {
+    followUserMutation
+      .mutateAsync(targetId)
+      .then(() => {
+        //update the profile after following
+        refetchProfile();
+      })
+      .catch((e) => console.log(e));
+  };
+  //----handler for unfollow mutation
+  const unfollowUserHandler = async () => {
+    unfollowUserMutation
+      .mutateAsync(targetId)
+      .then(() => {
+        //update the profile after unfollowing
+        refetchProfile();
+      })
+      .catch((e) => console.log(e));
+  };
+
+  //----handler for like mutation
+  const likePostHandler = async () => {
+    likePostMutation
+      .mutateAsync(postId)
+      .then(() => {
+        //update the profile after following
+        refetchPost();
+      })
+      .catch((e) => console.log(e));
+  };
+  //----handler for dislikes mutation
+  const dislikesPostHandler = async () => {
+    dislikePostMutation
+      .mutateAsync(postId)
+      .then(() => {
+        //update the profile after unfollowing
+        refetchPost();
+      })
+      .catch((e) => console.log(e));
+  };
+
+  // user mutation
+  const commentMutation = useMutation({
+    mutationKey: ["create-comment"],
+    mutationFn: createCommentAPI,
+  });
+  // formik config
+  const formik = useFormik({
+    // initial data
+    initialValues: {
+      content: "",
+    },
+    // validation
+    validationSchema: Yup.object({
+      content: Yup.string().required("Comment content is required"),
+    }),
+    // submit
+    onSubmit: (values) => {
+      const data = {
+        content: values.content,
+        postId,
+      };
+      commentMutation
+        .mutateAsync(data)
+        .then(() => {
+          refetchPost();
+        })
+        .catch((e) => console.log(e));
+    },
+  });
   return (
-    <div className="container mx-auto p-6 bg-gradient-to-br from-purple-500 via-indigo-600 to-pink-600 min-h-screen">
-      <div className="bg-white rounded-lg shadow-lg p-5 transition-all transform hover:scale-105 hover:shadow-xl">
+    <div className="container mx-auto p-4">
+      <div className="bg-white rounded-lg shadow-lg p-5">
         <img
           src={data?.postFound?.image?.path}
           alt={data?.postFound?.description}
-          className="w-full h-72 object-cover rounded-lg mb-4 transition-all transform hover:scale-105"
+          className="w-full h-full object-cover rounded-lg mb-4"
         />
+        {/* Show messages */}
+
         <div className="flex gap-4 items-center mb-4">
-          <span className="flex items-center gap-1 cursor-pointer transition-all hover:text-blue-500">
+          {/* like icon */}
+          <span
+            className="flex items-center gap-1 cursor-pointer"
+            onClick={likePostHandler}
+          >
             <FaThumbsUp />
+            {data?.postFound?.likes?.length || 0}
           </span>
-          <span className="flex items-center gap-1 cursor-pointer transition-all hover:text-red-500">
+
+          {/* Dislike icon */}
+          <span
+            className="flex items-center gap-1 cursor-pointer"
+            onClick={dislikesPostHandler}
+          >
             <FaThumbsDown />
+
+            {data?.postFound?.dislikes?.length || 0}
           </span>
-          <span className="flex items-center gap-1 cursor-pointer text-gray-600 hover:text-purple-400">
+          {/* views icon */}
+          <span className="flex items-center gap-1">
             <FaEye />
+            {data?.postFound?.viewers?.length || 0}
           </span>
         </div>
 
-        {/* Post author info */}
-        <span className="text-sm text-gray-700">
-          {/* {postData?.author?.username} */}
-        </span>
+        {/* follow icon */}
+        {isFollowing ? (
+          <button
+            onClick={unfollowUserHandler}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          >
+            <RiUserUnfollowFill className="mr-2" />
+            Unfollow
+          </button>
+        ) : (
+          <button
+            onClick={followUserHandler}
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+          >
+            Follow
+            <RiUserFollowLine className="ml-2" />
+          </button>
+        )}
 
-        {/* Post description */}
+        {/* author */}
+        <span className="ml-2">{/* {postData?.author?.username} */}</span>
+
+        {/* post details */}
         <div className="flex justify-between items-center mb-3">
           <div
-            className="rendered-html-content mb-2 text-lg text-gray-800"
+            className="rendered-html-content mb-2"
             dangerouslySetInnerHTML={{ __html: data?.postFound?.description }}
           />
-          <div className="flex gap-2">
-            <FaEdit className="text-blue-500 cursor-pointer transition-all transform hover:scale-110 hover:text-blue-700" />
-            <FaTrashAlt className="text-red-500 cursor-pointer transition-all transform hover:scale-110 hover:text-red-700" />
-          </div>
+
+          {/* Edit delete icon */}
+          {/* <div className="flex gap-2">
+            <FaEdit className="text-blue-500 cursor-pointer" />
+            <FaTrashAlt className="text-red-500 cursor-pointer" />
+          </div> */}
         </div>
 
         {/* Comment Form */}
-        <form className="mb-4">
+        <form onSubmit={formik.handleSubmit}>
           <textarea
-            className="w-full border border-gray-300 p-3 rounded-lg mb-2 transition-all focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full border border-gray-300 p-2 rounded-lg mb-2"
             rows="3"
             placeholder="Add a comment..."
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
+            {...formik.getFieldProps("content")}
           ></textarea>
+          {/* comment error */}
+          {formik.touched.content && formik.errors.content && (
+            <div className="text-red-500 mb-4 mt-1">
+              {formik.errors.content}
+            </div>
+          )}
           <button
             type="submit"
-            className="bg-blue-500 text-white rounded-lg px-6 py-2 transition-all hover:bg-blue-600"
+            className="bg-blue-500 text-white rounded-lg px-4 py-2"
           >
-            <FaComment className="inline mr-2" /> Comment
+            <FaComment className="inline mr-1" /> Comment
           </button>
         </form>
-
-        {/* Comments Section */}
+        {/* Comments List */}
         <div>
-          <h2 className="text-xl font-bold mb-2 text-gray-800">Comments:</h2>
-          {/* Here we would map over the comments, e.g. */}
-          {/* {postData?.comments?.map((comment, index) => (
-            <div key={index} className="border-b border-gray-300 mb-2 pb-2 hover:bg-gray-100 transition-all">
+          <h2 className="text-xl font-bold mb-2">Comments:</h2>
+          {data?.postFound?.comments?.map((comment, index) => (
+            <div key={index} className="border-b border-gray-300 mb-2 pb-2">
               <p className="text-gray-800">{comment.content}</p>
-              <span className="text-gray-600 text-sm">- {comment.author?.username}</span>
-              <small className="text-gray-600 text-sm ml-2">{new Date(comment.createdAt).toLocaleDateString()}</small>
+              <span className="text-gray-600 text-sm">
+                - {comment.author?.username}
+              </span>
+              <small className="text-gray-600 text-sm ml-2">
+                {new Date(comment.createdAt).toLocaleDateString()}
+              </small>
             </div>
-          ))} */}
+          ))}
         </div>
       </div>
     </div>

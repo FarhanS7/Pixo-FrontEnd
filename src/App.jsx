@@ -5,10 +5,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { checkAuthStatusAPI } from "./APIServices/users/usersAPI";
 import AuthRoute from "./components/AuthRoute/AuthRoute";
 import AccountSummaryDashboard from "./components/Dashboard/AccountSummaryDashboard";
+import DashboardPosts from "./components/Dashboard/DashboardPosts";
+import UploadProfilePic from "./components/Dashboard/UploadProfilePic";
 import UserDashboard from "./components/Dashboard/UserDashboard";
 import CreatePost from "./components/Posts/CreatePost";
 import PostDetails from "./components/Posts/PostDetails";
 import PostsList from "./components/Posts/PostList";
+import UpdatePost from "./components/Posts/UpdatePost";
 import PublicNavbar from "./components/Shared/Navbar/Navbar";
 import PrivateNavbar from "./components/Shared/PrivateNavbar/PrivateNavbar";
 import Home from "./Pages/Home/Home";
@@ -56,6 +59,30 @@ function App() {
               </AuthRoute>
             }
             path="create-post"
+          />
+          <Route
+            element={
+              <AuthRoute>
+                <DashboardPosts />
+              </AuthRoute>
+            }
+            path="posts"
+          />
+          <Route
+            element={
+              <AuthRoute>
+                <UpdatePost />
+              </AuthRoute>
+            }
+            path="update-post/:postId"
+          />
+          <Route
+            element={
+              <AuthRoute>
+                <UploadProfilePic />
+              </AuthRoute>
+            }
+            path="upload-profile-photo"
           />
         </Route>
         <Route element={<PostsList />} path="/posts" />

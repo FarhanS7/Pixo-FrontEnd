@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useFormik } from "formik";
 import { motion } from "framer-motion";
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { loginAPI } from "../../APIServices/users/usersAPI";
 import AlertMessage from "../Alert/AlertMessage";
