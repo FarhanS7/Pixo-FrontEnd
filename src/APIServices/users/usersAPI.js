@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "../../utils/baseEndpoint";
 
-//!Register User
+// ! Register user
 export const registerAPI = async (userData) => {
   const response = await axios.post(
     `${BASE_URL}/users/register`,
@@ -14,9 +14,10 @@ export const registerAPI = async (userData) => {
       withCredentials: true,
     }
   );
+
   return response.data;
 };
-//!login User
+// ! login user
 export const loginAPI = async (userData) => {
   const response = await axios.post(
     `${BASE_URL}/users/login`,
@@ -28,17 +29,19 @@ export const loginAPI = async (userData) => {
       withCredentials: true,
     }
   );
+
   return response.data;
 };
 
-//! Check AuthStatus User
+//http://localhost:5000/api/v1/users/checkAuthenticated
+// ! checkAuthStatus user
 export const checkAuthStatusAPI = async () => {
   const response = await axios.get(`${BASE_URL}/users/checkAuthenticated`, {
     withCredentials: true,
   });
+
   return response.data;
 };
-
 // ! user profile
 export const userProfileAPI = async () => {
   const response = await axios.get(`${BASE_URL}/users/profile`, {
@@ -59,7 +62,8 @@ export const logoutAPI = async (userData) => {
 
   return response.data;
 };
-// ! follow user
+
+// ! follw user
 export const followUserAPI = async (userId) => {
   const response = await axios.put(
     `${BASE_URL}/users/follow/${userId}`,
@@ -71,12 +75,91 @@ export const followUserAPI = async (userId) => {
 
   return response.data;
 };
-
-// ! unfollow user
+// ! unfollw user
 export const unfollowUserAPI = async (userId) => {
   const response = await axios.put(
     `${BASE_URL}/users/unfollow/${userId}`,
     {},
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+// ! send Email verification token
+export const sendEmailVerificatonTokenAPI = async () => {
+  const response = await axios.put(
+    `${BASE_URL}/users/account-verification-email`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+// ! updateEmailAPI
+export const updateEmailAPI = async (email) => {
+  const response = await axios.put(
+    `${BASE_URL}/users/update-email`,
+    {
+      email,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+
+// !Verify user account
+export const verifyUserAccountAPI = async (verifyToken) => {
+  const response = await axios.put(
+    `${BASE_URL}/users/verify-account/${verifyToken}`,
+    {},
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+// !forgot password
+export const forgotPasswordAPI = async (email) => {
+  const response = await axios.post(
+    `${BASE_URL}/users/forgot-password`,
+    {
+      email,
+    },
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+// !upload profile pic
+export const uplaodProfilePicAPI = async (formData) => {
+  const response = await axios.put(
+    `${BASE_URL}/users/upload-profile-picture`,
+    formData,
+    {
+      withCredentials: true,
+    }
+  );
+
+  return response.data;
+};
+
+// !reset password
+export const resetPasswordAPI = async (data) => {
+  const response = await axios.post(
+    `${BASE_URL}/users/reset-password/${data?.verifyToken}`,
+    {
+      password: data?.password,
+    },
     {
       withCredentials: true,
     }

@@ -3,7 +3,7 @@ import React from "react";
 import {
   fetchNotificationsAPI,
   readNotificationAPI,
-} from "../../APIServices/notifications/nofitificationsAPI";
+} from "../../APIServices/notifications/notificationsAPI";
 const Notifications = () => {
   const { data, refetch } = useQuery({
     queryKey: ["notifications"],

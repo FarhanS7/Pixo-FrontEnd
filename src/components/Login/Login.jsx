@@ -171,6 +171,13 @@ const Login = () => {
                 Sign in with Google
               </span>
             </a>
+            {/* Forgot pass link */}
+            <Link
+              className="mt-5 text-purple-700 font-bold"
+              to="/forgot-password"
+            >
+              Forgot Password
+            </Link>
           </div>
         </p>
       </motion.div>
